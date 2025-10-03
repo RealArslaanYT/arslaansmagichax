@@ -3,7 +3,7 @@
 	"id": "arslaansmagichax",
 	"version": "${version}",
 	"name": "Arslaan's Magic Hax",
-	"description": "cheat for block game",
+	"description": "cheats for block game",
 	"authors": [
 		"Arslaan Pathan"
 	],
@@ -11,7 +11,7 @@
 		"homepage": "https://arslaan3102.justlearning.net",
 		"sources": "https://github.com/RealArslaanYT/arslaansmagichax"
 	},
-	"license": "CC0-1.0",
+	"license": "MIT",
 	"icon": "assets/arslaansmagichax/icon.png",
 	"environment": "*",
 	"entrypoints": {
