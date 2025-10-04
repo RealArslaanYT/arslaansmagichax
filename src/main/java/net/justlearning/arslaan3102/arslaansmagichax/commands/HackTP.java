@@ -2,6 +2,7 @@ package net.justlearning.arslaan3102.arslaansmagichax.commands;
 
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
+import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
@@ -21,6 +22,7 @@ import java.util.Queue;
 
 public class HackTP {
     private static final Queue<double[]> stepQueue = new LinkedList<>();
+    private static int packetsPerTick = 5;
 
     public static BlockPos findClosestAirNearPosition(int x, int y, int z) {
         World world = MinecraftClient.getInstance().world;
@@ -42,12 +44,33 @@ public class HackTP {
         return null;
     }
 
+    private static int computeSafePacketsPerTick(int requestedSpeed) {
+        final int STEP_HORIZ = 2;
+        final double SAFE_HORIZ = 8.5; // server maximum horizontal move
+
+        int allowed = (int) Math.floor(SAFE_HORIZ / STEP_HORIZ);
+        if (allowed < 1) allowed = 1;
+
+        return Math.max(1, Math.min(requestedSpeed, allowed));
+    }
+
+    private static double parseCoordinate(String arg, double current) {
+        if (arg.startsWith("c")) {
+            if (arg.length() == 1) return current;
+            return current + Double.parseDouble(arg.substring(1));
+        } else {
+            return Double.parseDouble(arg);
+        }
+    }
+
     public static void register(CommandDispatcher<FabricClientCommandSource> dispatcher, CommandRegistryAccess access) {
         dispatcher.register(ClientCommandManager.literal("hacktp")
-                .then(ClientCommandManager.argument("x", IntegerArgumentType.integer())
-                        .then(ClientCommandManager.argument("y", IntegerArgumentType.integer())
-                                .then(ClientCommandManager.argument("z", IntegerArgumentType.integer())
-                                        .executes(HackTP::run)
+                .then(ClientCommandManager.argument("x", StringArgumentType.word())
+                        .then(ClientCommandManager.argument("y", StringArgumentType.word())
+                                .then(ClientCommandManager.argument("z", StringArgumentType.word())
+                                        .then(ClientCommandManager.argument("speed", IntegerArgumentType.integer(0, 25))
+                                                .executes(HackTP::run)
+                                        )
                                 )
                         )
                 )
@@ -68,28 +91,25 @@ public class HackTP {
 //        });
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             if (!stepQueue.isEmpty() && client.player != null) {
-                int packetsPerTick = 5; // how many packets you want per tick
                 for (int i = 0; i < packetsPerTick && !stepQueue.isEmpty(); i++) {
                     double[] pos = stepQueue.poll();
 
-                    client.getNetworkHandler().sendPacket(
-                            new PlayerMoveC2SPacket.PositionAndOnGround(
-                                    pos[0], pos[1], pos[2], true, client.player.horizontalCollision
-                            )
-                    );
+//                    client.getNetworkHandler().sendPacket(
+//                            new PlayerMoveC2SPacket.PositionAndOnGround(
+//                                    pos[0], pos[1], pos[2], true, client.player.horizontalCollision
+//                            )
+//                    );
 
                     client.player.setPos(pos[0], pos[1], pos[2]);
 
-                    client.player.sendMessage(Text.literal("Teleported to " + pos[0] + " " + pos[1] + " " + pos[2]), false);
+                    client.player.sendMessage(Text.literal("Teleported to " + pos[0] + " " + pos[1] + " " + pos[2] + " with packetsPerTick/speed " + packetsPerTick), false);
                 }
             }
         });
     }
 
     private static int run(CommandContext<FabricClientCommandSource> context) throws CommandSyntaxException {
-        int targetX = IntegerArgumentType.getInteger(context, "x");
-        int targetY = IntegerArgumentType.getInteger(context, "y");
-        int targetZ = IntegerArgumentType.getInteger(context, "z");
+        int speed = IntegerArgumentType.getInteger(context, "speed");
 
         ClientPlayerEntity player = context.getSource().getPlayer();
         if (player == null) {
@@ -101,10 +121,29 @@ public class HackTP {
         double currentY = player.getY();
         double currentZ = player.getZ();
 
-        int stepX = (targetX > currentX) ? 5 : -5;
-        int stepY = (targetY > currentY) ? 2 : -2;
-        int stepZ = (targetZ > currentZ) ? 5 : -5;
+        String xArg = context.getArgument("x", String.class);
+        String yArg = context.getArgument("y", String.class);
+        String zArg = context.getArgument("z", String.class);
 
+        double targetX = parseCoordinate(xArg, currentX);
+        double targetY = parseCoordinate(yArg, currentY);
+        double targetZ = parseCoordinate(zArg, currentZ);
+
+        if (speed < 1) {
+            packetsPerTick = computeSafePacketsPerTick(packetsPerTick);
+        } else {
+            packetsPerTick = computeSafePacketsPerTick(speed);
+        }
+
+        context.getSource().sendFeedback(Text.literal("Using " + packetsPerTick + " packets/tick (requested " + speed + ")"));
+
+        int stepX = (targetX > currentX) ? 2 : -2;
+        int stepY = (targetY > currentY) ? 2 : -2;
+        int stepZ = (targetZ > currentZ) ? 2 : -2;
+
+        for (int i = 1; i <= 8; i++) {
+            stepQueue.add(new double[]{currentX, currentY, currentZ});  // I don't know how this works but it makes Y more reliable (go through more blocks on the Y axis?)
+        }
         while ((stepY > 0 && currentY < targetY) || (stepY < 0 && currentY > targetY)) {
             currentY += stepY;
             if ((stepY > 0 && currentY > targetY) || (stepY < 0 && currentY < targetY)) currentY = targetY;
@@ -139,10 +178,6 @@ public class HackTP {
                     "Queued teleport to " + currentX + " " + currentY + " " + currentZ
             ));
         }
-
-        context.getSource().sendFeedback(Text.literal(
-                "Queued teleport to " + targetX + " " + targetY + " " + targetZ
-        ));
 
         return 1;
     }
