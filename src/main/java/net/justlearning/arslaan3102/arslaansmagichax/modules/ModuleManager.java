@@ -5,15 +5,42 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.render.RenderTickCounter;
+import net.minecraft.client.util.InputUtil;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.MathHelper;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class ModuleManager {
     private boolean hudRegistered = false;
+
+    private static Map<Module, Boolean> previousKeyState = new HashMap<>();
+
+    public static void handleKeyPresses() {
+        MinecraftClient client = MinecraftClient.getInstance();
+        if (client.player == null || client.currentScreen != null) return;
+
+        for (Module module : modules) {
+            int key = module.getGlfwKeybinding();
+            if (key == -1) continue;
+
+            boolean isPressed = InputUtil.isKeyPressed(client.getWindow().getHandle(), key);
+            boolean wasPressed = previousKeyState.getOrDefault(module, false);
+
+            // Only toggle on **key down** event (edge detection)
+            if (isPressed && !wasPressed) {
+                module.toggle();
+                if (!Objects.equals(module.getName(), "ClickGUI")) {
+                    client.player.sendMessage(Text.literal(
+                            "Toggled module " + module.getName() + " to " + (module.isEnabled() ? "ON" : "OFF")
+                    ), false);
+                }
+            }
+
+            previousKeyState.put(module, isPressed);
+        }
+    }
 
     private static List<Module> modules = new ArrayList<>();
     public static ModuleManager INSTANCE = new ModuleManager();
@@ -29,10 +56,17 @@ public class ModuleManager {
         return modules.stream().filter(Module::isEnabled).collect(Collectors.toList());
     }
 
+    public List<Module> getModulesWithCategory(Category category) {
+        return modules.stream()
+                .filter(module -> module.getCategory() == category)
+                .collect(Collectors.toList());
+    }
+
     public static void tick() {
         for (Module module : modules) {
             module.tick();
         }
+        handleKeyPresses();
     }
 
     public void registerHUD() {
@@ -52,7 +86,7 @@ public class ModuleManager {
         int titleColor = 16568909 | i; // weird magic
 
         drawContext.drawTextWithBackground(textRenderer, Text.literal("Arslaan's Magic Hax"), x, y, 50, titleColor);
-        y += textRenderer.fontHeight + 2;
+        y += textRenderer.fontHeight + 4;
 
         for (Module module : ModuleManager.getEnabledModules()) {
             int color = 16777215 | i; // more magic I don't understand

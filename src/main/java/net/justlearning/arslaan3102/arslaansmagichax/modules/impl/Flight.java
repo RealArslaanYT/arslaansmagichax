@@ -1,10 +1,12 @@
 package net.justlearning.arslaan3102.arslaansmagichax.modules.impl;
 
+import net.justlearning.arslaan3102.arslaansmagichax.modules.Category;
 import net.justlearning.arslaan3102.arslaansmagichax.modules.Module;
+import org.lwjgl.glfw.GLFW;
 
 public class Flight extends Module {
     public Flight() {
-        super("Flight", "Enables creative flight in survival.");
+        super("Flight", "Enables creative flight in survival.", GLFW.GLFW_KEY_G, Category.MOVEMENT);
     }
 
     @Override

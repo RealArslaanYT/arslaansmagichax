@@ -45,7 +45,7 @@ public class HackSetblock {
             return 0;
         }
 
-        BlockPos pos = client.player.getBlockPos().down();
+        BlockPos pos = client.player.getBlockPos();
         BlockState blockState = block.getDefaultState();
 
         client.world.setBlockState(pos, blockState);

@@ -13,6 +13,8 @@ public class ArslaansMagicHaxClient implements ClientModInitializer {
     public static Waterwalk waterwalk = new Waterwalk();
     public static NoAttackCooldown noAttackCooldown = new NoAttackCooldown();
     public static GhostScaffold ghostScaffold = new GhostScaffold();
+    public static ClickGUI clickGUI = new ClickGUI();
+    public static FakeSneak fakeSneak = new FakeSneak();
 
     @Override
     public void onInitializeClient() {
@@ -21,13 +23,15 @@ public class ArslaansMagicHaxClient implements ClientModInitializer {
         ClientCommandRegistrationCallback.EVENT.register(HackXP::register);
         ClientCommandRegistrationCallback.EVENT.register(HackSetblock::register);
         ClientCommandRegistrationCallback.EVENT.register(HackGive::register);
-        ClientCommandRegistrationCallback.EVENT.register(CrashCommand::register); // crashes the game for the funni
+        ClientCommandRegistrationCallback.EVENT.register(CrashCommand::register); // crashes the game for the funny
 
         ModuleManager.INSTANCE.register(flight);
         ModuleManager.INSTANCE.register(noFall);
         ModuleManager.INSTANCE.register(waterwalk);
         ModuleManager.INSTANCE.register(noAttackCooldown);
         ModuleManager.INSTANCE.register(ghostScaffold);
+        ModuleManager.INSTANCE.register(clickGUI);
+        ModuleManager.INSTANCE.register(fakeSneak);
 
         ModuleManager.INSTANCE.registerHUD();
 

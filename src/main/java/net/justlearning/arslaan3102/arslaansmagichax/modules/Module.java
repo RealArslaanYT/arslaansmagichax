@@ -5,14 +5,18 @@ import net.minecraft.client.MinecraftClient;
 public abstract class Module {
     private final String name;
     private final String description;
+    private final Category category;
     public MinecraftClient mc;
+    private final int glfwKeybinding;
 
     private boolean enabled = false;
 
-    public Module(String name, String description) {
+    public Module(String name, String description, int glfwKeybinding, Category category) {
         this.name = name;
         this.description = description;
         this.mc = MinecraftClient.getInstance();
+        this.glfwKeybinding = glfwKeybinding;
+        this.category = category;
     }
 
     public String getName() {
@@ -21,6 +25,14 @@ public abstract class Module {
 
     public String getDescription() {
         return description;
+    }
+
+    public int getGlfwKeybinding() {
+        return glfwKeybinding;
+    }
+
+    public Category getCategory() {
+        return category;
     }
 
     public boolean isEnabled() {

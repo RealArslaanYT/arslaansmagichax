@@ -1,12 +1,13 @@
 package net.justlearning.arslaan3102.arslaansmagichax.modules.impl;
 
+import net.justlearning.arslaan3102.arslaansmagichax.modules.Category;
 import net.justlearning.arslaan3102.arslaansmagichax.modules.Module;
 import net.minecraft.block.Blocks;
 import net.minecraft.util.math.BlockPos;
 
 public class Waterwalk extends Module {
     public Waterwalk() {
-        super("Waterwalk", "Allows you to walk on water.");
+        super("Waterwalk", "Allows you to walk on water.", -1, Category.MOVEMENT);
     }
 
     @Override
