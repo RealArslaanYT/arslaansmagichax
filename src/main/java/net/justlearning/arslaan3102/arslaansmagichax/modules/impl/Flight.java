@@ -10,11 +10,11 @@ public class Flight extends Module {
     }
 
     @Override
-    protected void onEnable() {
-        if (mc.player != null) {
-            mc.player.getAbilities().allowFlying = true;
-            mc.player.getAbilities().flying = true;
-        }
+    public void tick() {
+        if (!this.isEnabled() || mc.player == null) return;
+
+        mc.player.getAbilities().allowFlying = true;
+        mc.player.getAbilities().flying = true;
     }
 
     @Override

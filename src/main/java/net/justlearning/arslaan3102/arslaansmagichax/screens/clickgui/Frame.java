@@ -1,8 +1,9 @@
-package net.justlearning.arslaan3102.arslaansmagichax.screens;
+package net.justlearning.arslaan3102.arslaansmagichax.screens.clickgui;
 
 import net.justlearning.arslaan3102.arslaansmagichax.modules.Category;
 import net.justlearning.arslaan3102.arslaansmagichax.modules.Module;
 import net.justlearning.arslaan3102.arslaansmagichax.modules.ModuleManager;
+import net.justlearning.arslaan3102.arslaansmagichax.screens.clickgui.setting.Component;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.text.Text;
@@ -10,9 +11,8 @@ import net.minecraft.text.Text;
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
-public class ClickGUIFrame {
+public class Frame {
     public int x, y, width, height, dragX, dragY;
     public Category category;
 
@@ -20,11 +20,11 @@ public class ClickGUIFrame {
 
     public boolean isOpen = false;
 
-    private List<ClickGUIModuleButton> buttons;
+    private List<ModuleButton> buttons;
 
     protected MinecraftClient mc = MinecraftClient.getInstance();
 
-    public ClickGUIFrame(Category category, int x, int y, int width, int height) {
+    public Frame(Category category, int x, int y, int width, int height) {
         this.category = category;
         this.x = x;
         this.y = y;
@@ -36,10 +36,8 @@ public class ClickGUIFrame {
 
         int offset = height;
         for (Module module : ModuleManager.INSTANCE.getModulesWithCategory(category)) {
-            if (!Objects.equals(module.getName(), "ClickGUI")) {
-                buttons.add(new ClickGUIModuleButton(module, this, offset));
-                offset += height;
-            }
+            buttons.add(new ModuleButton(module, this, offset));
+            offset += height;
         }
     }
 
@@ -47,14 +45,13 @@ public class ClickGUIFrame {
         context.fill(x, y, x + width, y + height, new Color(252, 210, 77, 255).getRGB());
 
         String text = category.name();
-        int textWidth = mc.textRenderer.getWidth(text);
-        int textX = x + (width - textWidth) / 2;
         int textY = y + (height - mc.textRenderer.fontHeight) / 2;
 
-        context.drawText(mc.textRenderer, Text.literal(text), textX, textY, new Color(30, 30, 47, 255).getRGB(), false);
+        context.drawText(mc.textRenderer, Text.literal(text), x + 5, textY, new Color(30, 30, 47, 255).getRGB(), false);
+        context.drawText(mc.textRenderer, isOpen ? "-" : "+", x + width - 5 - mc.textRenderer.getWidth("+"), textY, new Color(30, 30, 47, 255).getRGB(), false);
 
         if (isOpen) {
-            for (ClickGUIModuleButton button : buttons) {
+            for (ModuleButton button : buttons) {
                 button.render(context, mouseX, mouseY, deltaTicks);
             }
         }
@@ -72,7 +69,7 @@ public class ClickGUIFrame {
         }
 
         if (isOpen) {
-            for (ClickGUIModuleButton moduleButton : buttons) {
+            for (ModuleButton moduleButton : buttons) {
                 moduleButton.mouseClicked(mouseX, mouseY, button);
             }
         }
@@ -81,6 +78,12 @@ public class ClickGUIFrame {
     public void mouseReleased(double mouseX, double mouseY, int button) {
         if (button == 0 && dragging) {
             dragging = false;
+        }
+
+        if (isOpen) {
+            for (ModuleButton moduleButton : buttons) {
+                moduleButton.mouseReleased(mouseX, mouseY, button);
+            }
         }
     }
 
@@ -92,6 +95,23 @@ public class ClickGUIFrame {
         if (dragging) {
             x = (int) (mouseX - dragX);
             y = (int) (mouseY - dragY);
+        }
+    }
+
+    public void updateButtons() {
+        int offset = height;
+
+        for (ModuleButton button : buttons) {
+            button.offset = offset;
+            offset += height;
+
+            if (button.extended) {
+                for (Component component : button.components) {
+                    if (component.setting.isVisible()) {
+                        offset += height;
+                    }
+                }
+            }
         }
     }
 }

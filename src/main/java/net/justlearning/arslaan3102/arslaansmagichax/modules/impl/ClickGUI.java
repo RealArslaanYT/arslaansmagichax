@@ -2,7 +2,7 @@ package net.justlearning.arslaan3102.arslaansmagichax.modules.impl;
 
 import net.justlearning.arslaan3102.arslaansmagichax.modules.Category;
 import net.justlearning.arslaan3102.arslaansmagichax.modules.Module;
-import net.justlearning.arslaan3102.arslaansmagichax.screens.ClickGUIScreen;
+import net.justlearning.arslaan3102.arslaansmagichax.screens.clickgui.ClickGUIScreen;
 import net.minecraft.client.MinecraftClient;
 import org.lwjgl.glfw.GLFW;
 

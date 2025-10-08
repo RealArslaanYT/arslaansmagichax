@@ -1,6 +1,8 @@
 package net.justlearning.arslaan3102.arslaansmagichax.modules;
 
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
+import net.justlearning.arslaan3102.arslaansmagichax.ArslaansMagicHax;
+import net.justlearning.arslaan3102.arslaansmagichax.modules.settings.Setting;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
@@ -9,11 +11,16 @@ import net.minecraft.client.util.InputUtil;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.MathHelper;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
 public class ModuleManager {
     private boolean hudRegistered = false;
+    private static final String CONFIG_FILE = "ArslaansMagicHax.properties";
 
     private static Map<Module, Boolean> previousKeyState = new HashMap<>();
 
@@ -92,6 +99,59 @@ public class ModuleManager {
             int color = 16777215 | i; // more magic I don't understand
             drawContext.drawTextWithShadow(textRenderer, Text.literal(module.getName()), x, y, color);
             y += textRenderer.fontHeight + 2;
+        }
+    }
+
+    public void close() {
+        for (Module module : modules) {
+            module.onDisable();
+        }
+        saveModuleStates();
+    }
+
+    public void loadModuleStates() {
+        File file = new File(CONFIG_FILE);
+        if (!file.exists()) return;
+
+        try (FileInputStream fis = new FileInputStream(file)) {
+            Properties properties = new Properties();
+            properties.load(fis);
+
+            for (Module module : modules) {
+                String enabled = properties.getProperty(module.getName() + ".enabled");
+                if ("true".equals(enabled)) {
+                    module.setEnabled(true);
+                    module.onEnable();
+                } else {
+                    module.setEnabled(false);
+                }
+
+                for (Setting setting : module.getSettings()) {
+                    String value = properties.getProperty(module.getName() + "." + setting.getName());
+                    if (value != null) {
+                        setting.setValueFromString(value);
+                    }
+                }
+            }
+        } catch (IOException e) {
+            ArslaansMagicHax.LOGGER.info("Failed to load module states and settings", e);
+        }
+    }
+
+    private void saveModuleStates() {
+        Properties properties = new Properties();
+        for (Module module : modules) {
+            properties.setProperty(module.getName() + ".enabled", String.valueOf(module.isEnabled()));
+
+            for (Setting setting : module.getSettings()) {
+                properties.setProperty(module.getName() + "." + setting.getName(), setting.getValueAsString());
+            }
+        }
+
+        try (FileOutputStream fos = new FileOutputStream(CONFIG_FILE)) {
+            properties.store(fos, "Arslaan's Magic Hax - Module States & Settings");
+        } catch (IOException e) {
+            ArslaansMagicHax.LOGGER.error("Failed to save module states and settings", e);
         }
     }
 }

@@ -1,4 +1,4 @@
-package net.justlearning.arslaan3102.arslaansmagichax.screens;
+package net.justlearning.arslaan3102.arslaansmagichax.screens.clickgui;
 
 import net.justlearning.arslaan3102.arslaansmagichax.ArslaansMagicHaxClient;
 import net.justlearning.arslaan3102.arslaansmagichax.modules.Category;
@@ -12,7 +12,7 @@ import java.util.List;
 public class ClickGUIScreen extends Screen {
     public static final ClickGUIScreen INSTANCE = new ClickGUIScreen();
 
-    private List<ClickGUIFrame> frames;
+    private List<Frame> frames;
 
     private ClickGUIScreen() {
         super(Text.literal("ClickGUI"));
@@ -21,14 +21,14 @@ public class ClickGUIScreen extends Screen {
 
         int offset = 20;
         for (Category category : Category.values()) {
-            frames.add(new ClickGUIFrame(category, offset, 30, 100, 30));
+            frames.add(new Frame(category, offset, 30, 100, 20));
             offset += 120;
         }
     }
 
     @Override
     public void render(DrawContext context, int mouseX, int mouseY, float deltaTicks) {
-        for (ClickGUIFrame frame : frames) {
+        for (Frame frame : frames) {
             frame.render(context, mouseX, mouseY, deltaTicks);
             frame.updatePosition(mouseX, mouseY);
         }
@@ -37,7 +37,7 @@ public class ClickGUIScreen extends Screen {
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        for (ClickGUIFrame frame : frames) {
+        for (Frame frame : frames) {
             frame.mouseClicked(mouseX, mouseY, button);
         }
         return super.mouseClicked(mouseX, mouseY, button);
@@ -45,7 +45,7 @@ public class ClickGUIScreen extends Screen {
 
     @Override
     public boolean mouseReleased(double mouseX, double mouseY, int button) {
-        for (ClickGUIFrame frame : frames) {
+        for (Frame frame : frames) {
             frame.mouseReleased(mouseX, mouseY, button);
         }
         return super.mouseReleased(mouseX, mouseY, button);

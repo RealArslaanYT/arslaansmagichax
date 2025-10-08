@@ -1,16 +1,22 @@
 {
-	"required": true,
-	"package": "net.justlearning.arslaan3102.arslaansmagichax.mixin",
-	"compatibilityLevel": "JAVA_21",
-	"mixins": [
-		"PlayerEntityMixin",
-        "MinecraftClientMixin",
-        "SplashTextResourceSupplierMixin"
-	],
-	"injectors": {
-		"defaultRequire": 1
-	},
-	"overwrites": {
-		"requireAnnotations": true
-	}
+  "required": true,
+  "package": "net.justlearning.arslaan3102.arslaansmagichax.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "ClientCommonNetworkHandlerMixin",
+    "MinecraftClientMixin",
+    "PlayerEntityMixin",
+    "PlayerInteractEntityC2SPacketMixin",
+    "PlayerMoveC2SPacketMixin",
+    "SplashTextResourceSupplierMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "overwrites": {
+    "requireAnnotations": true
+  },
+  "client": [
+    "DoubleSliderCallbacksMixin"
+  ]
 }
