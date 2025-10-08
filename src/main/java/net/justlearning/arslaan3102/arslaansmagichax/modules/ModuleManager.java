@@ -103,10 +103,11 @@ public class ModuleManager {
     }
 
     public void close() {
-        for (Module module : modules) {
-            module.onDisable();
-        }
+        // save then disable all
         saveModuleStates();
+        for (Module module : modules) {
+            module.setEnabled(false);
+        }
     }
 
     public void loadModuleStates() {
@@ -119,11 +120,17 @@ public class ModuleManager {
 
             for (Module module : modules) {
                 String enabled = properties.getProperty(module.getName() + ".enabled");
-                if ("true".equals(enabled)) {
+                if (Objects.equals(enabled, "true")) {
                     module.setEnabled(true);
-                    module.onEnable();
                 } else {
                     module.setEnabled(false);
+                }
+
+                String keyStr = properties.getProperty(module.getName() + ".key");
+                if (keyStr != null) {
+                    try {
+                        module.setGlfwKeybinding(Integer.parseInt(keyStr));
+                    } catch (NumberFormatException ignored) {}
                 }
 
                 for (Setting setting : module.getSettings()) {
@@ -138,10 +145,11 @@ public class ModuleManager {
         }
     }
 
-    private void saveModuleStates() {
+    public void saveModuleStates() {
         Properties properties = new Properties();
         for (Module module : modules) {
             properties.setProperty(module.getName() + ".enabled", String.valueOf(module.isEnabled()));
+            properties.setProperty(module.getName() + ".key", String.valueOf(module.getGlfwKeybinding()));
 
             for (Setting setting : module.getSettings()) {
                 properties.setProperty(module.getName() + "." + setting.getName(), setting.getValueAsString());

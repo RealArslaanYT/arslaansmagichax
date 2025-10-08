@@ -2,6 +2,8 @@ package net.justlearning.arslaan3102.arslaansmagichax.screens.clickgui;
 
 import net.justlearning.arslaan3102.arslaansmagichax.ArslaansMagicHaxClient;
 import net.justlearning.arslaan3102.arslaansmagichax.modules.Category;
+import net.justlearning.arslaan3102.arslaansmagichax.screens.clickgui.setting.Component;
+import net.justlearning.arslaan3102.arslaansmagichax.screens.clickgui.setting.KeybindingSelector;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.text.Text;
@@ -49,6 +51,20 @@ public class ClickGUIScreen extends Screen {
             frame.mouseReleased(mouseX, mouseY, button);
         }
         return super.mouseReleased(mouseX, mouseY, button);
+    }
+
+    @Override
+    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+        for (Frame frame : frames) {
+            for (ModuleButton button : frame.getButtons()) {
+                for (Component comp : button.components) {
+                    if (comp instanceof KeybindingSelector keybindingSelector) {
+                        keybindingSelector.onKeyPressed(keyCode);
+                    }
+                }
+            }
+        }
+        return super.keyPressed(keyCode, scanCode, modifiers);
     }
 
     @Override

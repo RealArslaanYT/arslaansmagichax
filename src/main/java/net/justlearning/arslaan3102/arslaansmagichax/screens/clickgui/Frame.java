@@ -98,6 +98,10 @@ public class Frame {
         }
     }
 
+    public List<ModuleButton> getButtons() {
+        return buttons;
+    }
+
     public void updateButtons() {
         int offset = height;
 
@@ -107,7 +111,12 @@ public class Frame {
 
             if (button.extended) {
                 for (Component component : button.components) {
-                    if (component.setting.isVisible()) {
+                    if (component.setting != null) {
+                        if (component.setting.isVisible()) {
+                            offset += height;
+                        }
+                    } else {
+                        // this is 99.99% the keybinding thing, just add offset anyway and hope it works i guess
                         offset += height;
                     }
                 }

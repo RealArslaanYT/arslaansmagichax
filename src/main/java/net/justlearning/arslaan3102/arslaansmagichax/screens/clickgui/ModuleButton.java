@@ -5,10 +5,7 @@ import net.justlearning.arslaan3102.arslaansmagichax.modules.settings.BooleanSet
 import net.justlearning.arslaan3102.arslaansmagichax.modules.settings.ModeSetting;
 import net.justlearning.arslaan3102.arslaansmagichax.modules.settings.NumberSetting;
 import net.justlearning.arslaan3102.arslaansmagichax.modules.settings.Setting;
-import net.justlearning.arslaan3102.arslaansmagichax.screens.clickgui.setting.CheckBox;
-import net.justlearning.arslaan3102.arslaansmagichax.screens.clickgui.setting.Component;
-import net.justlearning.arslaan3102.arslaansmagichax.screens.clickgui.setting.ModeBox;
-import net.justlearning.arslaan3102.arslaansmagichax.screens.clickgui.setting.Slider;
+import net.justlearning.arslaan3102.arslaansmagichax.screens.clickgui.setting.*;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.text.Text;
 
@@ -32,6 +29,8 @@ public class ModuleButton {
         this.components = new ArrayList<>();
 
         int setOffset = parent.height;
+        components.add(new KeybindingSelector(this, setOffset));
+        setOffset += parent.height;
         for (Setting setting : module.getSettings()) {
             if (setting instanceof BooleanSetting) {
                 components.add(new CheckBox(setting, this, setOffset));

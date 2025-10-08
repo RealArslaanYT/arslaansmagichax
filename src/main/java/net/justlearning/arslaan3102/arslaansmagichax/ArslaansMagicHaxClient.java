@@ -51,6 +51,7 @@ public class ArslaansMagicHaxClient implements ClientModInitializer {
         ModuleManager.INSTANCE.registerHUD();
 
         ModuleManager.INSTANCE.loadModuleStates();
+        ModuleManager.INSTANCE.saveModuleStates(); // clean up garbage e.g. someone types in "obama.havedih=barapbarapba"
 
         ClientTickEvents.END_CLIENT_TICK.register(mc -> {
                 ModuleManager.tick();
