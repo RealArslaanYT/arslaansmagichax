@@ -23,6 +23,8 @@ public class ArslaansMagicHaxClient implements ClientModInitializer {
     public static Spider spider = new Spider();
     public static Speed speed = new Speed();
     public static Fullbright fullbright = new Fullbright();
+    public static Jetpack jetpack = new Jetpack();
+    public static GravityModifier gravityModifier = new GravityModifier();
 
     @Override
     public void onInitializeClient() {
@@ -47,6 +49,8 @@ public class ArslaansMagicHaxClient implements ClientModInitializer {
         ModuleManager.INSTANCE.register(spider);
         ModuleManager.INSTANCE.register(speed);
         ModuleManager.INSTANCE.register(fullbright);
+        ModuleManager.INSTANCE.register(jetpack);
+        ModuleManager.INSTANCE.register(gravityModifier);
 
         ModuleManager.INSTANCE.registerHUD();
 

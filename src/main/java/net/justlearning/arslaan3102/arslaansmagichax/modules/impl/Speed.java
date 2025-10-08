@@ -4,6 +4,7 @@ import net.justlearning.arslaan3102.arslaansmagichax.modules.Category;
 import net.justlearning.arslaan3102.arslaansmagichax.modules.Module;
 import net.justlearning.arslaan3102.arslaansmagichax.modules.settings.BooleanSetting;
 import net.justlearning.arslaan3102.arslaansmagichax.modules.settings.NumberSetting;
+import net.minecraft.text.Text;
 
 public class Speed extends Module {
     private final NumberSetting speed = new NumberSetting("Speed", 0.1, 2.0, 0.4, 0.05);
@@ -17,6 +18,12 @@ public class Speed extends Module {
         addSetting(enableWhileSneaking);
         addSetting(enableInWater);
         addSetting(enableInLava);
+    }
+
+    @Override
+    protected void onEnable() {
+        if (mc.player == null) return;
+        mc.player.sendMessage(Text.literal("[Speed] It is recommended to use this hack in combination with NoFall."), false);
     }
 
     @Override

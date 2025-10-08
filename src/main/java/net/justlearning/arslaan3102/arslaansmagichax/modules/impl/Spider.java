@@ -3,10 +3,17 @@ package net.justlearning.arslaan3102.arslaansmagichax.modules.impl;
 import net.justlearning.arslaan3102.arslaansmagichax.modules.Category;
 import net.justlearning.arslaan3102.arslaansmagichax.modules.Module;
 import net.justlearning.arslaan3102.arslaansmagichax.modules.settings.NumberSetting;
+import net.minecraft.text.Text;
 import net.minecraft.util.math.Vec3d;
 
 public class Spider extends Module {
     private NumberSetting climbSpeed = new NumberSetting("Climb Speed", 0, 1, 0.2, 0.1);
+
+    @Override
+    protected void onEnable() {
+        if (mc.player == null) return;
+        mc.player.sendMessage(Text.literal("[Spider] It is recommended to use this hack in combination with NoFall."), false);
+    }
 
     public Spider() {
         super("Spider", "Allows you to climb walls like a spider.", -1, Category.MOVEMENT);

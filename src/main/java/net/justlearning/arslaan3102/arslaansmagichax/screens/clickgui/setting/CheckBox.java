@@ -20,10 +20,27 @@ public class CheckBox extends Component {
 
     @Override
     public void render(DrawContext context, int mouseX, int mouseY, float deltaTicks) {
-        int alpha = isHovered(mouseX, mouseY) ? 230 : 160;
-        context.fill(parent.parent.x, parent.parent.y + parent.offset + offset, parent.parent.x + parent.parent.width, parent.parent.y + parent.offset + offset + parent.parent.height, new Color(30, 30, 47, alpha).getRGB());
+        String displayText = booleanSetting.getName() + ": " + booleanSetting.isEnabled();
+        int textWidth = mc.textRenderer.getWidth(displayText);
+        int padding = 5;
+        int boxWidth = Math.max(parent.parent.width, textWidth + (padding * 2));
 
-        context.drawTextWithShadow(mc.textRenderer, Text.literal(booleanSetting.getName() + ": " + booleanSetting.isEnabled()), parent.parent.x + 5, parent.parent.y + parent.offset + offset + (parent.parent.height - mc.textRenderer.fontHeight) / 2, Color.white.getRGB());
+        int alpha = isHovered(mouseX, mouseY) ? 230 : 160;
+        context.fill(
+                parent.parent.x,
+                parent.parent.y + parent.offset + offset,
+                parent.parent.x + boxWidth,
+                parent.parent.y + parent.offset + offset + parent.parent.height,
+                new Color(30, 30, 47, alpha).getRGB()
+        );
+
+        context.drawTextWithShadow(
+                mc.textRenderer,
+                Text.literal(displayText),
+                parent.parent.x + padding,
+                parent.parent.y + parent.offset + offset + (parent.parent.height - mc.textRenderer.fontHeight) / 2,
+                Color.white.getRGB()
+        );
     }
 
     @Override

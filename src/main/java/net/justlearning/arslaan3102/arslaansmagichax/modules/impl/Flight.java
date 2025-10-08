@@ -2,11 +2,18 @@ package net.justlearning.arslaan3102.arslaansmagichax.modules.impl;
 
 import net.justlearning.arslaan3102.arslaansmagichax.modules.Category;
 import net.justlearning.arslaan3102.arslaansmagichax.modules.Module;
+import net.minecraft.text.Text;
 import org.lwjgl.glfw.GLFW;
 
 public class Flight extends Module {
     public Flight() {
         super("Flight", "Enables creative flight in survival.", GLFW.GLFW_KEY_G, Category.MOVEMENT);
+    }
+
+    @Override
+    protected void onEnable() {
+        if (mc.player == null) return;
+        mc.player.sendMessage(Text.literal("[Flight] It is recommended to use this hack in combination with NoFall."), false);
     }
 
     @Override

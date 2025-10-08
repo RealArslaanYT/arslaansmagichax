@@ -35,12 +35,12 @@ public class ModuleManager {
             boolean isPressed = InputUtil.isKeyPressed(client.getWindow().getHandle(), key);
             boolean wasPressed = previousKeyState.getOrDefault(module, false);
 
-            // Only toggle on **key down** event (edge detection)
             if (isPressed && !wasPressed) {
+                boolean wasEnabled = module.isEnabled(); // use !wasEnabled in the chat message for edge cases e.g. modules that toggle themselves off on enable
                 module.toggle();
                 if (!Objects.equals(module.getName(), "ClickGUI")) {
                     client.player.sendMessage(Text.literal(
-                            "Toggled module " + module.getName() + " to " + (module.isEnabled() ? "ON" : "OFF")
+                            "Toggled module " + module.getName() + " to " + (!wasEnabled ? "ON" : "OFF")
                     ), false);
                 }
             }

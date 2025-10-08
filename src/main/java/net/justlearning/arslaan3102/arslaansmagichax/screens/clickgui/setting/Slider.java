@@ -23,24 +23,52 @@ public class Slider extends Component {
 
     @Override
     public void render(DrawContext context, int mouseX, int mouseY, float deltaTicks) {
+        String displayText = numberSetting.getName() + ": " + numberSetting.getValue();
+        int defaultPadding = 5;
+        int boxWidth = parent.parent.width;
+
         int alpha = isHovered(mouseX, mouseY) ? 230 : 160;
-        context.fill(parent.parent.x, parent.parent.y + parent.offset + offset, parent.parent.x + parent.parent.width, parent.parent.y + parent.offset + offset + parent.parent.height, new Color(30, 30, 47, alpha).getRGB());
 
-        double diff = Math.min(parent.parent.width, Math.max(0, mouseX - parent.parent.x));
-        int renderWidth = (int) (parent.parent.width * (numberSetting.getValue() - numberSetting.getMin()) / (numberSetting.getMax() - numberSetting.getMin()));
+        context.fill(
+                parent.parent.x,
+                parent.parent.y + parent.offset + offset,
+                parent.parent.x + boxWidth,
+                parent.parent.y + parent.offset + offset + parent.parent.height,
+                new Color(30, 30, 47, alpha).getRGB()
+        );
 
-        context.fill(parent.parent.x, parent.parent.y + parent.offset + offset, parent.parent.x + renderWidth, parent.parent.y + parent.offset + offset + parent.parent.height, new Color(252, 210, 77, 255).getRGB());
+        double diff = Math.min(boxWidth, Math.max(0, mouseX - parent.parent.x));
+        int renderWidth = (int) (boxWidth * (numberSetting.getValue() - numberSetting.getMin()) / (numberSetting.getMax() - numberSetting.getMin()));
+
+        context.fill(
+                parent.parent.x,
+                parent.parent.y + parent.offset + offset,
+                parent.parent.x + renderWidth,
+                parent.parent.y + parent.offset + offset + parent.parent.height,
+                new Color(252, 210, 77, 255).getRGB()
+        );
 
         if (sliding) {
             if (diff == 0) {
                 numberSetting.setValue(numberSetting.getMin());
-            }
-            else {
-                numberSetting.setValue(roundToPlace((diff / parent.parent.width) * (numberSetting.getMax() - numberSetting.getMin()) + numberSetting.getMin(), 1));
+            } else {
+                numberSetting.setValue(roundToPlace((diff / boxWidth) * (numberSetting.getMax() - numberSetting.getMin()) + numberSetting.getMin(), 1));
             }
         }
 
-        context.drawTextWithShadow(mc.textRenderer, Text.literal(numberSetting.getName() + ": " + numberSetting.getValue()), parent.parent.x + 5, parent.parent.y + parent.offset + offset + (parent.parent.height - mc.textRenderer.fontHeight) / 2, Color.white.getRGB());
+        int textWidth = mc.textRenderer.getWidth(displayText);
+        int leftPadding = defaultPadding;
+        if (textWidth + 2 * defaultPadding > boxWidth) {
+            leftPadding = Math.max(2, boxWidth - textWidth - 2);
+        }
+
+        context.drawTextWithShadow(
+                mc.textRenderer,
+                Text.literal(displayText),
+                parent.parent.x + leftPadding,
+                parent.parent.y + parent.offset + offset + (parent.parent.height - mc.textRenderer.fontHeight) / 2,
+                Color.white.getRGB()
+        );
     }
 
     @Override

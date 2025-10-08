@@ -68,6 +68,11 @@ public class ClickGUIScreen extends Screen {
     }
 
     @Override
+    public boolean shouldPause() {
+        return false;
+    }
+
+    @Override
     public void close() {
         super.close();
         ArslaansMagicHaxClient.clickGUI.setEnabled(false);

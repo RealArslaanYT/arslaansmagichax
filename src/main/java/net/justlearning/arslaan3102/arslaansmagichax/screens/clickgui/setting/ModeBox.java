@@ -19,10 +19,28 @@ public class ModeBox extends Component {
 
     @Override
     public void render(DrawContext context, int mouseX, int mouseY, float deltaTicks) {
-        int alpha = isHovered(mouseX, mouseY) ? 230 : 160;
-        context.fill(parent.parent.x, parent.parent.y + parent.offset + offset, parent.parent.x + parent.parent.width, parent.parent.y + parent.offset + offset + parent.parent.height, new Color(30, 30, 47, alpha).getRGB());
+        String displayText = modeSetting.getName() + ": " + modeSetting.getMode();
+        int textWidth = mc.textRenderer.getWidth(displayText);
 
-        context.drawTextWithShadow(mc.textRenderer, Text.literal(modeSetting.getName() + ": " + modeSetting.getMode()), parent.parent.x + 5, parent.parent.y + parent.offset + offset + (parent.parent.height - mc.textRenderer.fontHeight) / 2, Color.white.getRGB());
+        int padding = 5;
+        int boxWidth = Math.max(parent.parent.width, textWidth + padding * 2);
+
+        int alpha = isHovered(mouseX, mouseY) ? 230 : 160;
+        context.fill(
+                parent.parent.x,
+                parent.parent.y + parent.offset + offset,
+                parent.parent.x + boxWidth,
+                parent.parent.y + parent.offset + offset + parent.parent.height,
+                new Color(30, 30, 47, alpha).getRGB()
+        );
+
+        context.drawTextWithShadow(
+                mc.textRenderer,
+                Text.literal(displayText),
+                parent.parent.x + padding, // left padding
+                parent.parent.y + parent.offset + offset + (parent.parent.height - mc.textRenderer.fontHeight) / 2,
+                Color.white.getRGB()
+        );
     }
 
     @Override
