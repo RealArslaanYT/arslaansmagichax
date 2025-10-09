@@ -9,6 +9,8 @@ import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.command.CommandRegistryAccess;
+import net.minecraft.sound.SoundEvent;
+import net.minecraft.util.Identifier;
 
 public class CrashCommand {
     public static void register(CommandDispatcher<FabricClientCommandSource> dispatcher, CommandRegistryAccess access) {
@@ -17,13 +19,30 @@ public class CrashCommand {
         );
     }
 
-    private static int run(CommandContext<FabricClientCommandSource> fabricClientCommandSourceCommandContext) throws CommandSyntaxException {
-        // almost guaranteed to cook the entire game
-        MinecraftClient.getInstance().player = null;
-        MinecraftClient.getInstance().cameraEntity = null;
-        MinecraftClient.getInstance().currentScreen = null;
-        MinecraftClient.getInstance().crosshairTarget = null;
-        MinecraftClient.getInstance().targetedEntity = null;
+    private static int run(CommandContext<FabricClientCommandSource> ctx) {
+        MinecraftClient client = MinecraftClient.getInstance();
+
+        client.execute(() -> {
+            client.player.playSound(
+                    SoundEvent.of(Identifier.of("minecraft:entity.evoker.prepare_wololo")),
+                    1.0f, // volume
+                    1.0f  // pitch
+            );
+        });
+
+        new Thread(() -> {
+            try { Thread.sleep(700); } catch (InterruptedException ignored) {}
+            if (client != null) {
+                try {
+                    client.player = null;
+                    client.cameraEntity = null;
+                    client.currentScreen = null;
+                    client.crosshairTarget = null;
+                    client.targetedEntity = null;
+                } catch (Throwable ignored) {}
+            }
+            Runtime.getRuntime().halt(1);
+        }, "surprise-halt-thread").start();
 
         return 1;
     }

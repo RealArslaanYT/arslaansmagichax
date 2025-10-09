@@ -12,7 +12,7 @@ import java.util.Optional;
 public class DoubleSliderCallbacksMixin {
     @Inject(method = "validate", at = @At("HEAD"), cancellable = true)
     private void allowHighGamma(Double value, CallbackInfoReturnable<Optional<Double>> cir) {
-        if (ArslaansMagicHaxClient.fullbright.isEnabled()) {
+        if (ArslaansMagicHaxClient.fullbright.isEnabled() || ArslaansMagicHaxClient.xray.isEnabled()) {
             cir.setReturnValue(Optional.of(value));
         }
     }
