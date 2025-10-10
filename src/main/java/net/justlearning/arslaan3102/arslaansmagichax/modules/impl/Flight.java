@@ -8,6 +8,7 @@ import org.lwjgl.glfw.GLFW;
 
 public class Flight extends Module {
     private int flyingTickCounter = 0;
+    private boolean sentFirstPacket = false;
 
     public Flight() {
         super("Flight", "Enables creative flight in survival.", GLFW.GLFW_KEY_G, Category.MOVEMENT);
@@ -27,12 +28,18 @@ public class Flight extends Module {
         mc.player.getAbilities().flying = true;
 
         if (flyingTickCounter >= 20) {
-            sendYPacket(-0.0625);
-            sendYPacket(0);
-            flyingTickCounter = 0;
+            if (!sentFirstPacket) {
+                sendYPacket(-0.0625);
+                sentFirstPacket = true;
+            } else {
+                sendYPacket(0);
+                sentFirstPacket = false;
+                flyingTickCounter = 0;
+            }
         }
         flyingTickCounter++;
     }
+
 
     @Override
     protected void onDisable() {
