@@ -26,6 +26,7 @@ public class ArslaansMagicHaxClient implements ClientModInitializer {
     public static Jetpack jetpack = new Jetpack();
     public static GravityModifier gravityModifier = new GravityModifier();
     public static Xray xray = new Xray();
+    public static HideModulesHUD hideModulesHUD = new HideModulesHUD();
 
     @Override
     public void onInitializeClient() {
@@ -53,6 +54,7 @@ public class ArslaansMagicHaxClient implements ClientModInitializer {
         ModuleManager.INSTANCE.register(jetpack);
         ModuleManager.INSTANCE.register(gravityModifier);
         ModuleManager.INSTANCE.register(xray);
+        ModuleManager.INSTANCE.register(hideModulesHUD);
 
         ModuleManager.INSTANCE.registerHUD();
 

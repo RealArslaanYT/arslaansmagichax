@@ -2,24 +2,26 @@ package net.justlearning.arslaan3102.arslaansmagichax.modules.impl;
 
 import net.justlearning.arslaan3102.arslaansmagichax.modules.Category;
 import net.justlearning.arslaan3102.arslaansmagichax.modules.Module;
+import net.justlearning.arslaan3102.arslaansmagichax.modules.settings.ModeSetting;
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.registry.Registries;
+import net.minecraft.text.Text;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class Xray extends Module {
     private List<BlockState> interestingBlocks = new ArrayList<>();
-    private double previousGamma = 1.0;
-    private boolean setPreviousGamma = false;
 
     public Xray() {
         super("Xray", "Allows you to see through blocks.", -1, Category.RENDER);
 
+        // Add ores, spawners, liquids, etc.
         interestingBlocks.add(Blocks.DIAMOND_ORE.getDefaultState());
         interestingBlocks.add(Blocks.DEEPSLATE_DIAMOND_ORE.getDefaultState());
         interestingBlocks.add(Blocks.GOLD_ORE.getDefaultState());
@@ -38,45 +40,31 @@ public class Xray extends Module {
         interestingBlocks.add(Blocks.DEEPSLATE_COPPER_ORE.getDefaultState());
         interestingBlocks.add(Blocks.NETHER_QUARTZ_ORE.getDefaultState());
         interestingBlocks.add(Blocks.NETHER_GOLD_ORE.getDefaultState());
-
         interestingBlocks.add(Blocks.SPAWNER.getDefaultState());
         interestingBlocks.add(Blocks.CHEST.getDefaultState());
         interestingBlocks.add(Blocks.ANCIENT_DEBRIS.getDefaultState());
         interestingBlocks.add(Blocks.GLOWSTONE.getDefaultState());
-
         interestingBlocks.add(Blocks.WATER.getDefaultState());
         interestingBlocks.add(Blocks.LAVA.getDefaultState());
     }
 
     @Override
     protected void onEnable() {
-        if (mc.worldRenderer == null) return;
+        if (mc.worldRenderer != null) mc.worldRenderer.reload();
 
-        mc.worldRenderer.reload();
+        if (mc.player != null) mc.player.sendMessage(Text.literal("[Xray] It is recommended to use this hack with Fullbright for a better experience."), false);
     }
 
-    @Override
-    public void tick() {
-        if (!this.isEnabled() || mc.player == null || mc.world == null || mc.options == null) return;
-
-        if (!setPreviousGamma) previousGamma = mc.options.getGamma().getValue();
-        setPreviousGamma = true;
-        mc.options.getGamma().setValue(1000.0);
-        mc.player.addStatusEffect(new StatusEffectInstance(Registries.STATUS_EFFECT.getEntry(StatusEffects.NIGHT_VISION.value()), 1, 255));
-    }
 
     @Override
     protected void onDisable() {
-        if (mc.worldRenderer == null || mc.options == null) return;
-
-        mc.worldRenderer.reload();
-        mc.options.getGamma().setValue(previousGamma);
-        setPreviousGamma = false;
+        if (mc.worldRenderer != null) mc.worldRenderer.reload();
     }
 
     public boolean isInterestingBlock(BlockState state) {
         return interestingBlocks.contains(state);
     }
 
-    // xraying is handled in BlockMixin
+    // xraying is handled in BlockMixin.java
 }
+

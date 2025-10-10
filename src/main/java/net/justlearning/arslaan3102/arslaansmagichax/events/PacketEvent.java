@@ -15,4 +15,15 @@ public final class PacketEvent {
         public void setCancelled(boolean c) { cancelled = c; }
         public boolean isCancelled() { return cancelled; }
     }
+
+    public static final class Receive {
+        private final Packet<?> packet;
+        private boolean cancelled;
+
+        public Receive(Packet<?> packet) { this.packet = packet; }
+
+        public Packet<?> packet() { return packet; }
+        public void setCancelled(boolean c) { cancelled = c; }
+        public boolean isCancelled() { return cancelled; }
+    }
 }

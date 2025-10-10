@@ -65,9 +65,8 @@ public class Criticals extends Module {
                 }
             } else if (Objects.equals(mode.getMode(), "Bypass")) {
                 // don't do the sprint bypass and make it more random-looking to throw off anticheat
-                sendYPacket(0.11);
-                sendYPacket(0.1100013579);
-                sendYPacket(0.0000013579);
+                sendYPacket(0.0625 + (Math.random() * 0.01));
+                sendYPacket(0.0);
             }
         }
     }

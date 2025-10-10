@@ -2,6 +2,7 @@ package net.justlearning.arslaan3102.arslaansmagichax.modules;
 
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.justlearning.arslaan3102.arslaansmagichax.ArslaansMagicHax;
+import net.justlearning.arslaan3102.arslaansmagichax.ArslaansMagicHaxClient;
 import net.justlearning.arslaan3102.arslaansmagichax.modules.settings.Setting;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
@@ -84,21 +85,23 @@ public class ModuleManager {
     }
 
     private void onRenderHud(DrawContext drawContext, RenderTickCounter renderTickCounter) {
-        TextRenderer textRenderer = MinecraftClient.getInstance().textRenderer;
-        float alpha = 1.0F;
-        int i = MathHelper.ceil(alpha * 255.0F) << 24; // I don't know what this dark magic is but it works
-        int x = 5;
-        int y = 5;
+        if (!ArslaansMagicHaxClient.hideModulesHUD.isEnabled()) {
+            TextRenderer textRenderer = MinecraftClient.getInstance().textRenderer;
+            float alpha = 1.0F;
+            int i = MathHelper.ceil(alpha * 255.0F) << 24; // I don't know what this dark magic is but it works
+            int x = 5;
+            int y = 5;
 
-        int titleColor = 16568909 | i; // weird magic
+            int titleColor = 16568909 | i; // weird magic
 
-        drawContext.drawTextWithBackground(textRenderer, Text.literal("Arslaan's Magic Hax"), x, y, 50, titleColor);
-        y += textRenderer.fontHeight + 4;
+            drawContext.drawTextWithBackground(textRenderer, Text.literal("Arslaan's Magic Hax"), x, y, 50, titleColor);
+            y += textRenderer.fontHeight + 4;
 
-        for (Module module : ModuleManager.getEnabledModules()) {
-            int color = 16777215 | i; // more magic I don't understand
-            drawContext.drawTextWithShadow(textRenderer, Text.literal(module.getName()), x, y, color);
-            y += textRenderer.fontHeight + 2;
+            for (Module module : ModuleManager.getEnabledModules()) {
+                int color = 16777215 | i; // more magic I don't understand
+                drawContext.drawTextWithShadow(textRenderer, Text.literal(module.getName()), x, y, color);
+                y += textRenderer.fontHeight + 2;
+            }
         }
     }
 
